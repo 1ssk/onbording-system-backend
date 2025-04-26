@@ -1,6 +1,6 @@
 module github.com/1ssk/api-gateway
 
-go 1.23.2
+go 1.24.2
 
 require (
 	github.com/gin-gonic/gin v1.10.0

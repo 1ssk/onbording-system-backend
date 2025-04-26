@@ -1,0 +1,201 @@
+image: golang:1.24
+
+variables:
+  REGISTRY: $CI_REGISTRY_IMAGE
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - apt-get update && apt-get install -y docker.io
+  - go version
+  - docker info
+
+cache:
+  paths:
+    - /go/pkg/mod
+
+build_api-gateway:
+  stage: build
+  script:
+    - cd api-gateway
+    - go mod tidy
+    - docker build -t $REGISTRY/api-gateway:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/api-gateway:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_admin:
+  stage: build
+  script:
+    - cd admin
+    - go mod tidy
+    - docker build -t $REGISTRY/admin:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/admin:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_jwt-go:
+  stage: build
+  script:
+    - cd jwt-go
+    - go mod tidy
+    - docker build -t $REGISTRY/jwt-go:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/jwt-go:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_user:
+  stage: build
+  script:
+    - cd user
+    - go mod tidy
+    - docker build -t $REGISTRY/user:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/user:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_leader:
+  stage: build
+  script:
+    - cd leader
+    - go mod tidy
+    - docker build -t $REGISTRY/leader:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/leader:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_manager:
+  stage: build
+  script:
+    - cd manager
+    - go mod tidy
+    - docker build -t $REGISTRY/manager:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/manager:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+build_notification:
+  stage: build
+  script:
+    - cd notification
+    - go mod tidy
+    - docker build -t $REGISTRY/notification:$CI_COMMIT_SHA .
+    - docker push $REGISTRY/notification:$CI_COMMIT_SHA
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_api-gateway:
+  stage: test
+  script:
+    - cd api-gateway
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_admin:
+  stage: test
+  script:
+    - cd admin
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_jwt-go:
+  stage: test
+  script:
+    - cd jwt-go
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_user:
+  stage: test
+  script:
+    - cd user
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_leader:
+  stage: test
+  script:
+    - cd leader
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_manager:
+  stage: test
+  script:
+    - cd manager
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+test_notification:
+  stage: test
+  script:
+    - cd notification
+    - go test -v ./...
+  only:
+    - main
+    - merge_requests
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose -f docker-compose.yml pull
+    - docker-compose -f docker-compose.yml up -d
+  environment:
+    name: production
+  only:
+    - main
+  tags:
+    - docker
+  when: manual

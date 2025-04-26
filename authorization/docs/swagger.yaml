@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info:
+  title: Authorization API
+  description: API for user authorization
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+
+paths:
+  /authorization/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+
+  /authorization/login:
+    post:
+      summary: Login an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+
+  /authorization/me:
+    get:
+      summary: Get current user information
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved user information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+
+  /authorization/set-role:
+    post:
+      summary: Set user role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetRoleRequest"
+      responses:
+        "200":
+          description: Successfully set user role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Bad request
+        "500":
+          description: Internal server error
+
+  /authorization/{id}:
+    get:
+      summary: Get user information by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully retrieved user information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        fullname:
+          type: string
+        password:
+          type: string
+        repeat_password:
+          type: string
+        current_stage:
+          type: string
+      required:
+        - email
+        - fullname
+        - password
+        - repeat_password
+        - current_stage
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    SetRoleRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+      required:
+        - role
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullname:
+          type: string
+        role:
+          type: string

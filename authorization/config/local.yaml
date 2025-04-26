@@ -1,0 +1,16 @@
+env_type: "local"
+
+jwt:
+  private_key_path: "./keys/private_key.pem"
+  public_key_path: "./keys/public_key.pem"
+  token_ttl: 24h
+
+storage:
+  host: localhost
+  port: 5433
+  user: postgres
+  pass: password
+  db_name: user
+
+server:
+  port: 8080

@@ -58,3 +58,21 @@ func RequireAdmin(c *gin.Context) {
     }
     c.Next()
 }
+
+func RequireLeader(c *gin.Context) {
+    role, exists := c.Get("role")
+    if !exists || role != "leader" {
+        c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Leader access required"})
+        return
+    }
+    c.Next()
+}
+
+func RequireManager(c *gin.Context) {
+    role, exists := c.Get("role")
+    if !exists || role != "manager" {
+        c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Leader access required"})
+        return
+    }
+    c.Next()
+}

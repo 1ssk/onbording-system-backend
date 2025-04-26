@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8083:8083"
+      - "50052:50052"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5433/database?sslmode=disable
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local

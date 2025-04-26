@@ -1,0 +1,141 @@
+openapi: 3.0.0
+info:
+  title: RoleLeader Service API
+  version: 1.0.0
+  description: Microservice for managing meetings and feedback between leaders and users
+
+paths:
+  /api/feedback:
+    post:
+      tags: [Feedback]
+      summary: Create feedback for meeting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFeedbackRequest"
+            example:
+              meeting_id: "meeting_123"
+              message: "Отличная встреча! Всё четко по делу"
+      responses:
+        "200":
+          description: Feedback created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateFeedbackResponse"
+              example:
+                status: "success"
+
+  /api/leaders/meetings/{meeting_id}:
+    get:
+      tags: [Meetings]
+      summary: Get meeting details
+      parameters:
+        - name: meeting_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Meeting details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMeetingResponse"
+              example:
+                meeting:
+                  meeting_id: "meeting_123"
+                  user_id: "user_456"
+                  leader_id: "leader_789"
+                  title: "Планирование Q4"
+                  start_time: "2024-03-20T14:00:00Z"
+                  status: "completed"
+                  feedback: "Обсудили ключевые метрики"
+
+  /api/leaders/{leader_id}/meetings:
+    get:
+      tags: [Meetings]
+      summary: Get all leader's meetings
+      parameters:
+        - name: leader_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of meetings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetLeaderMeetingsResponse"
+              example:
+                meetings:
+                  - meeting_id: "meeting_123"
+                    user_id: "user_456"
+                    leader_id: "leader_789"
+                    title: "Планирование Q4"
+                    start_time: "2024-03-20T14:00:00Z"
+                    status: "completed"
+                    feedback: "Обсудили ключевые метрики"
+                  - meeting_id: "meeting_124"
+                    user_id: "user_457"
+                    leader_id: "leader_789"
+                    title: "Разбор итогов спринта"
+                    start_time: "2024-03-21T10:00:00Z"
+                    status: "scheduled"
+                    feedback: ""
+
+components:
+  schemas:
+    Meeting:
+      type: object
+      properties:
+        meeting_id:
+          type: string
+        user_id:
+          type: string
+        leader_id:
+          type: string
+        title:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [planned, active, completed]
+        feedback:
+          type: string
+
+    CreateFeedbackRequest:
+      type: object
+      required: [meeting_id, message]
+      properties:
+        meeting_id:
+          type: string
+        message:
+          type: string
+
+    CreateFeedbackResponse:
+      type: object
+      properties:
+        status:
+          type: string
+
+    GetMeetingResponse:
+      type: object
+      properties:
+        meeting:
+          $ref: "#/components/schemas/Meeting"
+
+    GetLeaderMeetingsResponse:
+      type: object
+      properties:
+        meetings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meeting"

@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Meeting Service API
+  version: 1.0.0
+  description: API for managing meetings, users and leaders
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:8081
+    description: Development server
+
+paths:
+  /api/meetings:
+    post:
+      tags: [Meetings]
+      summary: Create a new meeting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddMeetingRequest"
+      responses:
+        200:
+          description: Created meeting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddMeetingResponse"
+
+    get:
+      tags: [Meetings]
+      summary: Get all meetings
+      responses:
+        200:
+          description: List of meetings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMeetingsResponse"
+
+  /api/meetings/{meeting_id}:
+    get:
+      tags: [Meetings]
+      summary: Get meeting by ID
+      parameters:
+        - name: meeting_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Meeting details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetMeetingResponse"
+
+    patch:
+      tags: [Meetings]
+      summary: Update meeting
+      parameters:
+        - name: meeting_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeetingRequest"
+      responses:
+        200:
+          description: Updated meeting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateMeetingResponse"
+
+    delete:
+      tags: [Meetings]
+      summary: Delete meeting
+      parameters:
+        - name: meeting_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Deleted meeting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteMeetingResponse"
+
+  /api/meetings/users:
+    post:
+      tags: [Users]
+      summary: Create new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddUserRequest"
+      responses:
+        200:
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddUserResponse"
+
+  /api/meetings/users/{email}:
+    get:
+      tags: [Users]
+      summary: Get user by email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserResponse"
+
+  /api/meetings/leaders:
+    post:
+      tags: [Leaders]
+      summary: Create new leader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddLeaderRequest"
+      responses:
+        200:
+          description: Created leader
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddLeaderResponse"
+
+  /api/meetings/users/{email}/finish:
+    post:
+      tags: [Users]
+      summary: Finish user's course
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Course finished
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FinishCourseResponse"
+
+components:
+  schemas:
+    # Meetings
+    AddMeetingRequest:
+      type: object
+      required: [user_id, leader_id, title, start_time]
+      properties:
+        user_id:
+          type: string
+        leader_id:
+          type: string
+        title:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+
+    AddMeetingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    GetMeetingResponse:
+      type: object
+      properties:
+        meeting:
+          $ref: "#/components/schemas/Meeting"
+
+    UpdateMeetingRequest:
+      type: object
+      required: [meeting_id]
+      properties:
+        meeting_id:
+          type: string
+        user_id:
+          type: string
+        leader_id:
+          type: string
+        title:
+          type: string
+
+    UpdateMeetingResponse:
+      type: object
+      properties:
+        meeting:
+          $ref: "#/components/schemas/Meeting"
+
+    DeleteMeetingResponse:
+      type: object
+      properties:
+        meeting_id:
+          type: string
+
+    GetMeetingsResponse:
+      type: object
+      properties:
+        meetings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meeting"
+
+    # Users
+    AddUserRequest:
+      type: object
+      required: [email, fullname, password]
+      properties:
+        email:
+          type: string
+        fullname:
+          type: string
+        password:
+          type: string
+        current_stage:
+          type: string
+
+    AddUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    GetUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullname:
+          type: string
+        current_stage:
+          type: string
+
+    # Leaders
+    AddLeaderRequest:
+      type: object
+      required: [email, fullname, password]
+      properties:
+        email:
+          type: string
+        fullname:
+          type: string
+        password:
+          type: string
+
+    AddLeaderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    # Course
+    FinishCourseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    # Common
+    Meeting:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        leader_id:
+          type: string
+        title:
+          type: string
+        start_time:
+          type: string
+          format: date-time

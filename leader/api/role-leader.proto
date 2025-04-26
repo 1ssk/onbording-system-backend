@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option go_package = "internal/api";
+import "google/api/annotations.proto";
+
+
+
+service RoleLeader {
+  rpc CreateFeedback (CreateFeedbackRequest) returns (CreateFeedbackResponse) {
+    option (google.api.http) = {
+      post: "/api/feedback"
+      body: "*"
+    };
+  }
+  rpc GetMeeting (GetMeetingRequest) returns (GetMeetingResponse) {
+    option (google.api.http) = {
+      get: "/api/leaders/meetings/{meeting_id}"
+    };
+  }
+  rpc GetLeaderMeeting (GetLeaderMeetingsRequest) returns (GetLeaderMeetingsResponse) {
+    option (google.api.http) = {
+      get: "/api/leaders/{leader_id}/meetings"
+    };
+  }
+}
+
+message Meeting {
+  string meeting_id = 1;
+  string user_id = 2;
+  string leader_id = 3;
+  string title = 4;
+  string start_time = 5;
+  string status = 6;
+  string feedback = 7;
+}
+
+message CreateFeedbackRequest {
+  string meeting_id = 1;
+  string message = 2;
+}
+
+message CreateFeedbackResponse {
+  string status = 1;
+}
+
+message GetMeetingRequest {
+  string meeting_id = 1;
+}
+
+message GetMeetingResponse {
+  Meeting meeting = 1;
+}
+
+message GetLeaderMeetingsRequest {
+  string leader_id = 1;
+}
+
+message GetLeaderMeetingsResponse {
+  repeated Meeting meetings = 1;
+}

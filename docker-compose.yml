@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80" 
+      - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
@@ -47,6 +47,38 @@ services:
       - ./user/.env
     networks:
       - app-network
+
+  leader:
+    build:
+      context: ./leader
+      dockerfile: Dockerfile
+    environment:
+      ENV_TYPE: prod
+    volumes:
+      - ./leader/config:/app/config
+    networks:
+      - app-network
+
+  manager:
+    build:
+      context: ./manager
+      dockerfile: Dockerfile
+    environment:
+      ENV_TYPE: prod
+    volumes:
+      - ./manager/config:/app/config
+    networks:
+      - app-network
+
+  notification:
+      build:
+        context: ./notification
+        dockerfile: Dockerfile
+      volumes:
+        - ./notification/config:/app/config
+      networks:
+        - app-network
+
 
 networks:
   app-network:

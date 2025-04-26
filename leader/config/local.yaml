@@ -1,0 +1,18 @@
+env_type: local
+
+POSTGRES:
+  POSTGRES_HOST: dpg-d00aal49c44c73fg3krg-a.oregon-postgres.render.com
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: root
+  POSTGRES_PASSWORD: wq4vATzowyonIZtjh87h4WqECir5PTxw
+  POSTGRES_DB: golang_e7dx
+  POSTGRES_MAX_CONN: 10
+  POSTGRES_MIN_CONN: 5
+
+server:
+  host: localhost
+  port: 8083
+  ROLE_LEADER_GRPC_PORT: 50052
+
+LOGGER:
+  ENV: local

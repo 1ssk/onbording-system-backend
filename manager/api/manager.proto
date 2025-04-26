@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+option go_package = "pkg/api/test";
+
+package meeting;
+
+import "google/api/annotations.proto";
+
+
+service MeetingService {
+  rpc AddMeeting(AddMeetingRequest) returns (AddMeetingResponse) {
+    option (google.api.http) = {
+      post: "/api/meetings"
+      body: "*"
+    };
+  }
+
+  rpc GetMeeting(GetMeetingRequest) returns (GetMeetingResponse) {
+    option (google.api.http) = {
+      get: "/api/meetings/{meeting_id}"
+    };
+  }
+
+  rpc UpdateMeeting(UpdateMeetingRequest) returns (UpdateMeetingResponse) {
+    option (google.api.http) = {
+      patch: "/api/meetings/{meeting_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteMeeting(DeleteMeetingRequest) returns (DeleteMeetingResponse) {
+    option (google.api.http) = {
+      delete: "/api/meetings/{meeting_id}"
+    };
+  }
+
+  rpc GetMeetings(GetMeetingsRequest) returns (GetMeetingsResponse) {
+    option (google.api.http) = {
+      get: "/api/meetings"
+    };
+  }
+
+  rpc AddUser(AddUserRequest) returns (AddUserResponse) {
+    option (google.api.http) = {
+      post: "/api/meetings/users"
+      body: "*"
+    };
+  }
+
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/api/meetings/users/{email}"
+    };
+  }
+
+ rpc AddLeader(AddLeaderRequest) returns (AddLeaderResponse) {
+    option (google.api.http) = {
+      post: "/api/meetings/leaders"
+      body: "*"
+    };
+  }
+
+  rpc FinishCourse(FinishCourseRequest) returns (FinishCourseResponse) {
+    option (google.api.http) = {
+      post: "/api/meetings/users/{email}/finish"
+    };
+  }
+}
+
+message AddMeetingRequest {
+  string user_id = 1;
+  string leader_id = 2;
+  string title = 3;
+  string start_time = 4;
+}
+
+message AddMeetingResponse {
+  string id = 1;
+}
+
+message GetMeetingRequest {
+  string meeting_id = 1;
+}
+
+message GetMeetingResponse {
+  Meeting meeting = 1;
+}
+
+message UpdateMeetingRequest {
+  string meeting_id = 1;
+  string user_id = 2;
+  string leader_id = 3;
+  string title = 4;
+}
+
+message UpdateMeetingResponse {
+  Meeting meeting = 1;
+}
+
+message DeleteMeetingRequest {
+  string meeting_id = 1;
+}
+
+message DeleteMeetingResponse {
+  string meeting_id = 1;
+}
+
+message AddUserRequest {
+  string email = 1;
+  string fullname = 2;
+  string password = 3;
+  string current_stage = 5;
+}
+
+message AddUserResponse {
+  string id = 1;
+}
+
+message AddLeaderRequest {
+  string email = 1;
+  string fullname = 2;
+  string password = 3;
+}
+
+message AddLeaderResponse {
+  string id = 1;
+}
+
+message FinishCourseRequest {
+  string email = 1;
+}
+
+message FinishCourseResponse {
+  string id = 1;
+}
+
+message GetMeetingsRequest {
+}
+
+message GetMeetingsResponse {
+  repeated Meeting meetings = 1;
+}
+
+message GetMeetingsByManagerRequest {
+  string manager_id = 1;
+}
+
+message GetMeetingsByManagerResponse {
+  repeated Meeting meetings = 1;
+}
+
+message GetUserRequest {
+  string email = 1;
+}
+
+message GetUserResponse {
+  string id = 1;
+  string email = 2;
+  string fullname = 3;
+  string current_stage = 4;
+}
+
+message Meeting {
+  string id = 1;
+  string user_id = 2;
+  string leader_id = 3;
+  string title = 4;
+  string start_time = 5;
+}
